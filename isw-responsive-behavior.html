@@ -1,0 +1,46 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<script>
+	/**
+	 * `isw-responsive-behavior`
+	 * Accepts device and orientation information that can be used to build an responsive element.
+	 *
+	 * @customElement
+	 * @polymer
+	 * @demo demo/index.html
+	 */
+	iswResponsiveBehavior = {
+		properties: {
+			/**
+			 * Current with of the screen.
+			 */
+			screenWidth: {
+				type: Number,
+				notify: true
+			},
+			/**
+			 * Current height of the screen.
+			 */
+			screenHeight: {
+				type: Number,
+				notify: true
+			},
+			/**
+			 * Current device ("mobile", "tablet" or "desktop").
+			 */
+			device: {
+				type: String,
+				notify: true,
+				reflectToAttribute: true
+			},
+			/**
+			 * Current orientation ("portrait" or "landscape").
+			 */
+			orientation: {
+				type: String,
+				notify: true,
+				reflectToAttribute: true
+			}
+		}
+	}
+</script>
