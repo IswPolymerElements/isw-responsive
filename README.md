@@ -11,7 +11,7 @@ Element: Checking and evaluating screen size and provides device and orientation
 Example: Useage with Starter Kit.
 
 my-app.html
-```
+```html
 [...]
 <!-- ISW Responsive imports -->
 <link rel="import" href="../bower_components/isw-responsive/isw-responsive.html">
@@ -84,7 +84,7 @@ my-app.html
 ```
 
 my-view1.html
-```
+```html
 [...]
 <!-- ISW Responsive imports -->
 <link rel="import" href="../bower_components/isw-responsive/isw-responsive-behavior.html">
