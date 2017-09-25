@@ -20,9 +20,7 @@ my-app.html
 
 <dom-module id="my-app">
   <template>
-    <style>
-      [...]
-    </style>
+    [...]
 
     <!-- Definition, bindings, event listener for changes. -->
     <isw-responsive
