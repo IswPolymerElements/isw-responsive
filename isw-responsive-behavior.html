@@ -3,7 +3,20 @@
 <script>
 	/**
 	 * `isw-responsive-behavior`
-	 * Accepts device and orientation information that can be used to build an responsive element.
+	 * Provides plain properties that reflects to attribute to enable responsive css selectors.
+	 *
+	 * Use an single `isw-responsive` element to read and evaluate screen sizes and bind the results
+	 * to multiple elements using `isw-responsive-behavior` (See Starter Kit example).
+	 * `isw-responsive-behavior` does NOT read or evaluate the screensize itself!
+	 *
+	 * ```css
+	 * :host([device="desktop"]) .someClass {
+	 *   someCssProperty: someValue;
+	 * }
+	 * :host([device="mobile"][orientation="landscape"]) .someClass {
+	 *   someCssProperty: someValue;
+	 * }
+	 * ```
 	 *
 	 * @customElement
 	 * @polymer

@@ -5,7 +5,9 @@ Provides feedback about device and orientation, using material design breakpoint
 https://material.io/guidelines/layout/responsive-ui.html#responsive-ui-breakpoints
 
 Consists of an behavior and an element.
+
 Behavior: Provides reflectToAttribute properties for propagation and css selectors.
+
 Element: Checking and evaluating screen size and provides device and orientation values.
 
 Example: Useage with Starter Kit.
