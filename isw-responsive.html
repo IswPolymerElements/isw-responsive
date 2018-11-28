@@ -1,8 +1,13 @@
 <link rel="import" href="../polymer/polymer-element.html">
 
-<link rel="import" href="isw-responsive-behavior.html">
+<link rel="import" href="../iron-meta/iron-meta.html">
 
 <dom-module id="isw-responsive">
+	<template>
+		<iron-meta key="isw-responsive-device" value="[[device]]"></iron-meta>
+		<iron-meta key="isw-responsive-orientation" value="[[orientation]]"></iron-meta>
+	</template>
+
 	<script>
 		/**
 		 * `isw-responsive`
@@ -28,11 +33,45 @@
 		 * @polymer
 		 * @demo demo/index.html
 		 */
-		class IswResponsive extends Polymer.mixinBehaviors( [ iswResponsiveBehavior ], Polymer.Element ) {
+		class IswResponsive extends Polymer.Element {
 			static get is() { return 'isw-responsive'; }
 
 			static get properties() {
 				return {
+					/**
+					 * Current device ("mobile", "tablet" or "desktop").
+					 */
+					device: {
+						type: String,
+						notify: true,
+						reflectToAttribute: true
+					},
+					/**
+					 * Current orientation ("portrait" or "landscape").
+					 */
+					orientation: {
+						type: String,
+						notify: true,
+						reflectToAttribute: true
+					},
+					/**
+					 * Current with of the screen.
+					 */
+					_screenWidth: {
+						type: Number,
+						notify: true
+					},
+					/**
+					 * Current height of the screen.
+					 */
+					_screenHeight: {
+						type: Number,
+						notify: true
+					},
+					/**
+					 * Breakpoints according to material guidelines.
+					 * https://material.io/guidelines/layout/responsive-ui.html#responsive-ui-breakpoints
+					 */
 					_deviceBreakpoints: {
 						type: Object,
 						value: {
@@ -49,52 +88,52 @@
 				};
 			}
 
-			created() {
+			constructor() {
+				super();
 				this._boundResize = this.onResize.bind( this );
 			}
 
-			attached() {
+			connectedCallback() {
+				super.connectedCallback();
 				window.addEventListener( 'resize', this._boundResize );
 				this.onResize();
 			}
 
-			detached() {
+			disconnectedCallback() {
+				super.disconnectedCallback();
 				window.removeEventListener( 'resize', this._boundResize );
 			}
 
 			onResize() {
-				this.set( 'screenWidth', window.innerWidth );
-				this.set( 'screenHeight', window.innerHeight );
+				var oldDevice = this.device;
+				var oldOrientation = this.orientation;
 
-				if( this.screenWidth <= this.screenHeight ) {
+				this.set( '_screenWidth', window.innerWidth );
+				this.set( '_screenHeight', window.innerHeight );
+
+				if( this._screenWidth <= this._screenHeight ) {
 					this.set( 'orientation', 'portrait' );
 				} else {
 					this.set( 'orientation', 'landscape' );
 				}
 
-				if( this.screenWidth >= this._deviceBreakpoints[ this.orientation ].desktop ) {
+				if( this._screenWidth >= this._deviceBreakpoints[ this.orientation ].desktop ) {
 					this.set( 'device', 'desktop' );
-				} else if( this.screenWidth >= this._deviceBreakpoints[ this.orientation ].tablet ) {
+				} else if( this._screenWidth >= this._deviceBreakpoints[ this.orientation ].tablet ) {
 					this.set( 'device', 'tablet' );
 				} else {
 					this.set( 'device', 'mobile' );
 				}
 
-				/**
-				 * Fired when the screen size changes.
-				 *
-				 * @event screen-changed
-				 * @param {screenWidth} Screen width
-				 * @param {screenHeight} Screen height
-				 * @param {device} Device
-				 * @param {orientation} Orientation
-				 */
-				this.dispatchEvent( new CustomEvent( 'screen-changed', { detail: {
-					screenWidth: this.screenWidth,
-					screenHeight: this.screenHeight,
-					device: this.device,
-					orientation: this.orientation
-				} } ) );
+				if( this.device != oldDevice || this.orientation != oldOrientation ) {
+					document.dispatchEvent( new CustomEvent( 'isw-responsive-viewport-changed', {
+						bubbles: true,
+						detail: {
+							device: this.device,
+							orientation: this.orientation
+						}
+					} ) );
+				}
 			}
 		}
 

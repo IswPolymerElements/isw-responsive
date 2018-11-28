@@ -1,60 +1,61 @@
 # \<isw-responsive\>
 
-Provides feedback about device and orientation, using material design breakpoints.
+`isw-responsive` calculates `device` and `orientation` according to material design breakpoints
+and pushes the result to all elementes using `isw-responsive-behavior` using `iron-meta` and `iron-signals` like events.
+
+If there will be an `iron-signals` 2.0, the element will be updated to use it instead of custom `document` events.
 
 https://material.io/guidelines/layout/responsive-ui.html#responsive-ui-breakpoints
 
-Consists of an behavior and an element.
+## `isw-responsive`
 
-Behavior: Provides reflectToAttribute properties for propagation and css selectors.
+Calculates `device` and `orientation` from the current screen size.
 
-Element: Checking and evaluating screen size and provides device and orientation values.
+Use it only once in your app, it will notify all `isw-responsive-behavior` elements about changes.
 
-Example: Useage with Starter Kit.
+### `isw-responsive`
+
+Provides `reflectToAttribute` properties for css selectors, and events for imperative use.
+
+## `iron-meta`
+
+`isw-responsive` writes the viewport information to `iron-meta`, so they are global available via these keys:
+
+* isw-responsive-device
+* isw-responsive-orientation
+
+## `iron-signals`
+
+Future plans: If `iron-signals` will get an 2.0 update, the `viewport-changed` event should be exposed to `iron-signals`., e.g.:
+
+* isw-responsive-viewport-changed
+
+## Example: Useage with Starter Kit.
 
 my-app.html
 ```html
 [...]
+
 <!-- ISW Responsive imports -->
 <link rel="import" href="../bower_components/isw-responsive/isw-responsive.html">
 <link rel="import" href="../bower_components/isw-responsive/isw-responsive-behavior.html">
+
 [...]
 
 <dom-module id="my-app">
   <template>
     [...]
 
-    <!-- Definition, bindings, event listener for changes. -->
-    <isw-responsive
-        device="{{device}}"
-        orientation="{{orientation}}"
-        on-screen-changed="_screenChanged">
-    </isw-responsive>
+    <!-- isw-responsive definition that does the calculating and notifying. -->
+    <isw-responsive></isw-responsive>
 
     [...]
 
     <!-- Deactivate app drawers responsive behavior for imperative example. -->
     <app-drawer-layout fullbleed responsive-width="0" force-narrow="[[_forceNarrow]]">
-      <!-- Drawer content -->
+
       [...]
 
-      <!-- Main content -->
-      <app-header-layout has-scrolling-region>
-
-        [...]
-
-        <iron-pages
-            selected="[[page]]"
-            attr-for-selected="name"
-            fallback-selection="view404"
-            role="main">
-          <!-- Propagate device and orientation to the views. -->
-          <my-view1 name="view1" device="[[device]]" orientation="[[orientation]]"></my-view1>
-          <my-view2 name="view2" device="[[device]]" orientation="[[orientation]]"></my-view2>
-          <my-view3 name="view3" device="[[device]]" orientation="[[orientation]]"></my-view3>
-          <my-view404 name="view404"></my-view404>
-        </iron-pages>
-      </app-header-layout>
     </app-drawer-layout>
   </template>
 
@@ -62,9 +63,17 @@ my-app.html
     // Use Polymer.mixinBehaviors to assign the behavior to get device and orientation properties that reflect to attribute.
     class MyApp extends Polymer.mixinBehaviors([ iswResponsiveBehavior ], Polymer.Element ) {
       static get is() { return 'my-app'; }
+
       [...]
 
-      _screenChanged() {
+      constructor() {
+        super();
+        this.addEventListener( 'viewport-changed', e => this._viewportChanged( e ) );
+      }
+
+      [...]
+
+      _viewportChanged() {
         // Manually set the drawers force narrow property depending on device and orientation (Imperative use example).
         switch( this.device ) {
           case 'desktop':

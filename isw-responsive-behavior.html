@@ -1,5 +1,7 @@
 <link rel="import" href="../polymer/polymer-element.html">
 
+<link rel="import" href="../iron-meta/iron-meta.html">
+
 <script>
 	/**
 	 * `isw-responsive-behavior`
@@ -25,20 +27,6 @@
 	iswResponsiveBehavior = {
 		properties: {
 			/**
-			 * Current with of the screen.
-			 */
-			screenWidth: {
-				type: Number,
-				notify: true
-			},
-			/**
-			 * Current height of the screen.
-			 */
-			screenHeight: {
-				type: Number,
-				notify: true
-			},
-			/**
 			 * Current device ("mobile", "tablet" or "desktop").
 			 */
 			device: {
@@ -54,6 +42,41 @@
 				notify: true,
 				reflectToAttribute: true
 			}
+		},
+
+		created: function() {
+			this._meta = document.createElement('iron-meta');
+		},
+
+		ready: function() {
+			// Listen to remote 'isw-responsive' events.
+			document.addEventListener( 'isw-responsive-viewport-changed', e => this.__iswResponsiveBehaviorViewportChanged( e ) );
+
+			// Init properties meta data.
+			this.set( 'device', this._meta.byKey( 'isw-responsive-device' ) );
+			this.set( 'orientation', this._meta.byKey( 'isw-responsive-orientation' ) );
+
+			this.dispatchEvent( new CustomEvent( 'viewport-changed', { detail: {
+				device: this.device,
+				orientation: this.orientation
+			} } ) );
+		},
+
+		/**
+		 * Execute `viewport-changed` from isw-responsive.
+		 */
+		__iswResponsiveBehaviorViewportChanged: function( event ) {
+			this.set( 'device', event.detail.device );
+			this.set( 'orientation', event.detail.orientation );
+
+			/**
+			 * Fired when a viewport property changes.
+			 *
+			 * @event viewport-changed
+			 * @param {device} Device
+			 * @param {orientation} Orientation
+			 */
+			this.dispatchEvent( new CustomEvent( 'viewport-changed', { detail: event.detail } ) );
 		}
 	}
 </script>
